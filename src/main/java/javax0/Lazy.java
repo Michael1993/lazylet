@@ -1,5 +1,7 @@
 package javax0;
 
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Lazy<T> implements Supplier<T> {
@@ -27,6 +29,15 @@ public class Lazy<T> implements Supplier<T> {
         }
         supplied = true;
         return value = supplier.get();
+    }
+
+    public <U> Lazy<U> map(Function<T,  U> mapper) {
+        Objects.requireNonNull(mapper);
+        if (supplied) {
+            return new Lazy<>(() -> mapper.apply(this.value));
+        } else {
+            return new Lazy<>(() -> mapper.apply(supplier.get()));
+        }
     }
 
     public class Sync<T> implements Supplier<T> {
